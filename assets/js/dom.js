@@ -1,16 +1,3 @@
-// dom.js
-// In this file, students will write the functions that update the DOM.
-
-// Useful DOM APIs to reference:
-// - document.createElement: https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement
-// - Element.appendChild: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
-// - document.querySelector: https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector
-// - HTMLInputElement: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-// - HTMLElement.focus(): https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus
-// - Element.setAttribute(): https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
-// - Element.classList: https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
-
-/*
 EXPECTED HTML STRUCTURE FOR EACH TASK ITEM
 ------------------------------------------
 The functions below should produce elements that match this structure:
@@ -54,13 +41,29 @@ EXPECTED OUTPUT OF renderTasks():
 */
 
 // This function should:
-// - Clear the current task list
+
 // - Loop through the tasks array
 // - Create an <li> for each task using createTaskElement()
 // - Add each <li> to the <ul>
 // - Show the empty state message when there are no tasks
 function renderTasks(tasks, listElement, emptyStateElement) {
   // TODO: Implement rendering logic
+  // - Clear the current task list
+listElement.innerHTML ="";
+
+if (tasks.length === 0) {
+    emptyStateElement.style.display = "block";
+    return;
+  }
+  
+  // Hide empty message
+  emptyStateElement.style.display = "none";
+  
+  // Add each task
+  for (let i = 0; i < tasks.length; i++) {
+    const taskElement = createTaskElement(tasks[i]);
+    listElement.appendChild(taskElement);
+  }
 }
 
 
@@ -72,6 +75,29 @@ function renderTasks(tasks, listElement, emptyStateElement) {
 // - NOT add event listeners (app.js will handle that)
 function createTaskElement(task) {
   // TODO: Implement element creation logic
+  const tasks_Seperator = document.createElement("li")
+  tasks_Seperator.className = "task-item"
+  tasks_Seperator.dataset.id = task.id
+  tasks_Seperator.className = "task-item"
+
+  let metaInfo = "";
+  if (task.category || task.dueDate) {
+    metaInfo = `<p class="task-meta">${task.category || ""} ${task.category && task.dueDate ? "•" : ""} ${task.dueDate || ""}</p>`;
+  }
+
+  tasks_Seperator.innerHTML = `
+  <div class="task-item-left">
+    <input type="checkbox" class="task-checkbox" ${task.completed ? "checked" : ""} name="task-${task.id}">
+      <div class="task-main">
+        <p class="task-title">${task.title}</p>
+        ${metaInfo}
+      </div>
+    </div>
+    <div class="task-actions">
+      <button type="button" class="task-delete-btn">Delete</button>
+    </div>
+  `;
+  return tasks_Seperator;
 }
 
 
@@ -81,4 +107,7 @@ function createTaskElement(task) {
 // - Put focus back on the task title input
 function clearTaskForm(form) {
   // TODO: Reset the form and focus the title input
+  form.reset();
+  document.getElementById("task-title").focus();
 }
+
