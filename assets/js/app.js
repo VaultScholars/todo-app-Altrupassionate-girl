@@ -18,7 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // - Update nextTaskId so it doesn't conflict
   // - Show tasks on the page
   // TODO: Load tasks and render them
-
+  tasks = loadTasks();
+  if (tasks.length > 0) {
+  const maxId = Math.max(...tasks.map(t => t.id || 0));
+  nextTaskId = maxId + 1;
+}
+  renderTasks(tasks, taskList, emptyState);
 
 
   // When the user submits the form to add a task:
@@ -34,6 +39,21 @@ document.addEventListener("DOMContentLoaded", () => {
     // - Update the page to show the new task
     // - Clear the form
     // TODO: Add a new task
+    const title = document.getElementById("task-title").value.trim();
+    if (title === "") return;
+
+    const newTask = {
+      id: nextTaskId++,
+      title: title,
+      category: document.getElementById("task-category").value.trim(),
+      dueDate: document.getElementById("task-due-date").value,
+      completed: false
+    };
+
+    tasks.push(newTask);
+    saveTasks(tasks);
+    renderTasks(tasks, taskList, emptyState);
+    clearTaskForm(form);
   });
 
 
@@ -54,6 +74,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // - Save updated tasks
       // - Update the page
       // TODO: Toggle completed state
+      const task = tasks.find(t => t.id === taskId);
+      if (task) {
+        task.completed = !task.completed;
+        saveTasks(tasks);
+        renderTasks(tasks, taskList, emptyState);
+      }
       return;
     }
 
@@ -64,6 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // - Save updated tasks
       // - Update the page
       // TODO: Delete the task
+       tasks = tasks.filter(t => t.id !== taskId);
+      saveTasks(tasks);
+      renderTasks(tasks, taskList, emptyState);
       return;
     }
   });
